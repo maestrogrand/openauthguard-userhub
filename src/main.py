@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.core.logging import logger
@@ -20,8 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(user_router, prefix="/users")
-
+# Include the router without any prefix
+app.include_router(user_router)
 
 @app.on_event("startup")
 async def startup_event():
@@ -34,7 +33,6 @@ async def startup_event():
         logger.error("Failed to connect to the database. Shutting down...")
         raise SystemExit("Database connection failed.")
 
-
 @app.on_event("shutdown")
 async def shutdown_event():
     """
@@ -42,7 +40,6 @@ async def shutdown_event():
     Logs the service shutdown.
     """
     logger.info(f"Shutting down service: {settings.service_name}")
-
 
 @app.get("/health")
 def health_check():
@@ -56,7 +53,6 @@ def health_check():
         "status": "up",
         "database": status
     }
-
 
 if __name__ == "__main__":
     logger.info(f"Starting {settings.service_name} on port {settings.port}...")

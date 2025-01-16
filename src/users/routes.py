@@ -7,32 +7,28 @@ from src.users.models import User
 
 router = APIRouter(tags=["Users"])
 
-
-@router.post("/user", response_model=UserResponse)
+@router.post("/register", response_model=UserResponse)
 def register_user(request: UserCreate, db: Session = Depends(get_db)):
     """
     Endpoint to register a new individual user.
     """
     return create_user(request, db)
 
-
-@router.put("/user/{user_id}", response_model=UserResponse)
+@router.put("/edit/{user_id}", response_model=UserResponse)
 def edit_user(user_id: str, request: UserUpdate, db: Session = Depends(get_db)):
     """
     Endpoint to update an existing user's profile.
     """
     return update_user(user_id, request, db)
 
-
-@router.get("/user/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: str, db: Session = Depends(get_db)):
     """
     Endpoint to retrieve a user's details by their ID.
     """
     return get_user_by_id(user_id, db)
 
-
-@router.get("/user/username/{username}", response_model=UserResponse)
+@router.get("/username/{username}", response_model=UserResponse)
 def get_user_by_username(username: str, db: Session = Depends(get_db)):
     """
     Endpoint to retrieve a user's details by their username.
@@ -54,7 +50,6 @@ def get_user_by_username(username: str, db: Session = Depends(get_db)):
         created_at=user.created_at,
         updated_at=user.updated_at,
     )
-
 
 @router.get("/tenant/{company_name}")
 def get_tenant_by_company_name(company_name: str, db: Session = Depends(get_db)):

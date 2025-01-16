@@ -3,7 +3,7 @@ import sys
 from loguru import logger
 from src.core.config import settings
 
-LOG_FILE_PATH = os.getenv("LOG_FILE_PATH", "logs/users.log")
+LOG_FILE_PATH = os.getenv("LOG_FILE_PATH", "logs/userhub.log")
 
 logger.remove()
 

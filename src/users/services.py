@@ -1,8 +1,10 @@
 import uuid
-from sqlalchemy.orm import Session
+
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
 from src.users.models import User
-from src.users.schemas import UserCreate, UserUpdate, UserResponse
+from src.users.schemas import UserCreate, UserResponse, UserUpdate
 from src.utils.helpers import hash_password
 
 

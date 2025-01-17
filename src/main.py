@@ -1,12 +1,14 @@
+from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from src.core.logging import logger
+
 from src.core.config import settings
-from src.users.routes import user_router, auth_router
 from src.core.db_healthcheck import check_database_connection
+from src.core.logging import logger
 from src.core.version import SERVICE_VERSION
-import uvicorn
+from src.users.routes import auth_router, user_router
 
 
 @asynccontextmanager

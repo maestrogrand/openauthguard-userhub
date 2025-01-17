@@ -1,10 +1,12 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from uuid import UUID
+
 from src.core.database import get_db
-from src.users.schemas import UserCreate, UserUpdate, UserResponse
-from src.users.services import create_user, update_user, get_user_by_id
 from src.users.models import User
+from src.users.schemas import UserCreate, UserResponse, UserUpdate
+from src.users.services import create_user, get_user_by_id, update_user
 
 auth_router = APIRouter(tags=["Authentication"])
 

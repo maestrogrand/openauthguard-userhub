@@ -38,25 +38,25 @@ def get_user(user_id: UUID, db: Session = Depends(get_db)):
     return get_user_by_id(str(user_id), db)
 
 
-@user_router.get("/username/{username}", response_model=UserResponse)
+@user_router.get("/username/{username}")
 def get_user_by_username(username: str, db: Session = Depends(get_db)):
     """
-    Endpoint to retrieve a user's details by their username.
+    Endpoint to retrieve a user's details by their username, including password_hash.
     """
     user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
-    return UserResponse(
-        user_id=str(user.user_id),
-        username=user.username,
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        role=user.role,
-        address=user.address,
-        phone_number=user.phone_number,
-        social_links=user.social_links,
-        password_hash=user.password_hash,
-        created_at=user.created_at,
-        updated_at=user.updated_at,
-    )
+    return {
+        "user_id": str(user.user_id),
+        "username": user.username,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "role": user.role,
+        "address": user.address,
+        "phone_number": user.phone_number,
+        "social_links": user.social_links,
+        "password_hash": user.password_hash,
+        "created_at": user.created_at,
+        "updated_at": user.updated_at,
+    }

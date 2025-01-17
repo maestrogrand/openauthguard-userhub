@@ -4,7 +4,7 @@ UserHub is a FastAPI-based microservice designed for managing individual user ac
 
 ---
 
-📘 **[API Documentation](docs/api.md)**  
+📘 **[API Documentation](docs/API.md)**  
 For detailed information on available endpoints, request formats, and response structures, check out the [API Documentation](docs/api.md).
 
 
@@ -229,7 +229,7 @@ git commit -m "Add feature: <feature-description>"`
 
 ### Code of Conduct
 
-By contributing, you agree to uphold our [Code of Conduct](CODE_OF_CONDUCT.md). Be respectful, collaborative, and supportive of all contributors.
+By contributing, you agree to uphold our [Code of Conduct](docs/CODE_OF_CONDUCT.md). Be respectful, collaborative, and supportive of all contributors.
 
 ---
 

@@ -1,9 +1,11 @@
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-from src.main import app
+
 from src.core.database import get_db
+from src.main import app
 
 client = TestClient(app)
 

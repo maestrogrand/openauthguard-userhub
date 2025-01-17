@@ -1,8 +1,9 @@
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
+
+from src.core.config import settings
 from src.core.database import engine
 from src.core.logging import logger
-from src.core.config import settings
 
 
 def check_database_connection() -> bool:

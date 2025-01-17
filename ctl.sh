@@ -79,6 +79,67 @@ start_service() {
     cleanup
 }
 
+increment_version() {
+    VERSION_LINE=$(grep 'SERVICE_VERSION' src/core/version.py)
+    VERSION=$(echo $VERSION_LINE | sed -E "s/.*\"(.*)\"/\1/")
+    echo "Current version: $VERSION"
+    IFS='.' read -ra VERSION_PARTS <<<"$VERSION"
+
+    MAJOR=${VERSION_PARTS[0]}
+    MINOR=${VERSION_PARTS[1]}
+    PATCH=${VERSION_PARTS[2]}
+
+    PS3='Enter which part to increment (1 for MAJOR, 2 for MINOR, 3 for PATCH): '
+    options=("MAJOR" "MINOR" "PATCH")
+    select opt in "${options[@]}"; do
+        case $REPLY in
+        1)
+            echo "Incrementing MAJOR version from $VERSION"
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            break
+            ;;
+        2)
+            echo "Incrementing MINOR version from $VERSION"
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            break
+            ;;
+        3)
+            echo "Incrementing PATCH version from $VERSION"
+            PATCH=$((PATCH + 1))
+            break
+            ;;
+        *)
+            echo "Invalid option. Please select 1, 2, or 3."
+            ;;
+        esac
+    done
+
+    NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+    echo "New version: $NEW_VERSION"
+
+    sed -i '' -e "s/SERVICE_VERSION = \".*\"/SERVICE_VERSION = \"$NEW_VERSION\"/" src/core/version.py
+    echo "Updated version in src/core/version.py"
+}
+
+git_push() {
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    echo "Enter commit message:"
+    read commit_message
+    git add .
+    git commit -m "$commit_message"
+    git push origin $current_branch
+
+    echo "Changes pushed to $current_branch"
+}
+
+commit_commit() {
+    increment_version
+    git_push
+}
+
 lint_code() {
     create_venv
     activate_venv
@@ -140,7 +201,7 @@ cleanup_tests_env() {
 }
 
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 {start|lint|format|test|cleanup} [environment]"
+    echo "Usage: $0 {start|lint|format|test|cleanup|commit} [environment]"
     exit 1
 fi
 
@@ -160,9 +221,12 @@ test)
 cleanup)
     cleanup
     ;;
+commit)
+    commit_commit
+    ;;
 *)
     echo "Invalid argument: $1"
-    echo "Usage: $0 {start|lint|format|test|cleanup} [environment]"
+    echo "Usage: $0 {start|lint|format|test|cleanup|commit} [environment]"
     exit 1
     ;;
 esac

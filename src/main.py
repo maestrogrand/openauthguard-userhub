@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.core.logging import logger
 from src.core.config import settings
-from src.users.routes import router as user_router
+from src.users.routes import user_router, auth_router
 from src.core.db_healthcheck import check_database_connection
 
 app = FastAPI(
@@ -19,8 +19,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include the router without any prefix
-app.include_router(user_router)
+@app.get("/health")
+def health_check():
+    """
+    Health check endpoint to verify service and database status.
+    """
+    is_db_connected = check_database_connection()
+    status = "connected" if is_db_connected else "not connected"
+    logger.info(f"Health check: Database is {status}.")
+    return {
+        "status": "up",
+        "database": status
+    }
+
+app.include_router(auth_router)
+app.include_router(user_router, prefix="/users")
 
 @app.on_event("startup")
 async def startup_event():
@@ -40,19 +53,6 @@ async def shutdown_event():
     Logs the service shutdown.
     """
     logger.info(f"Shutting down service: {settings.service_name}")
-
-@app.get("/health")
-def health_check():
-    """
-    Health check endpoint to verify service and database status.
-    """
-    is_db_connected = check_database_connection()
-    status = "connected" if is_db_connected else "not connected"
-    logger.info(f"Health check: Database is {status}.")
-    return {
-        "status": "up",
-        "database": status
-    }
 
 if __name__ == "__main__":
     logger.info(f"Starting {settings.service_name} on port {settings.port}...")

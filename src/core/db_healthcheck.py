@@ -2,7 +2,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import text
 from src.core.database import engine
 from src.core.logging import logger
-
+from src.core.config import settings
 
 def check_database_connection() -> bool:
     """
@@ -17,4 +17,5 @@ def check_database_connection() -> bool:
         return True
     except OperationalError as e:
         logger.error(f"Database connection failed: {e}")
+        logger.debug(f"Connection string used: {settings.get_encoded_database_url()}")
         return False

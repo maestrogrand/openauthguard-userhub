@@ -107,6 +107,22 @@ format_code() {
     echo "Formatting complete."
 
     deactivate
+    cleanup
+}
+
+run_tests() {
+    create_venv
+    activate_venv
+    install_dependencies
+    setup_environment
+
+    echo "Running tests..."
+    pytest tests
+    echo "Testing complete."
+
+    deactivate
+    cleanup_tests_env
+    cleanup
 }
 
 cleanup() {
@@ -116,8 +132,15 @@ cleanup() {
     echo "Cleanup complete."
 }
 
+cleanup_tests_env() {
+    echo "Cleaning up test environment directories..."
+    rm -rf tests/__pycache__
+    rm -rf .pytest_cache
+    echo "Test environment cleanup complete."
+}
+
 if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 {start|lint|format|cleanup} [environment]"
+    echo "Usage: $0 {start|lint|format|test|cleanup} [environment]"
     exit 1
 fi
 
@@ -131,12 +154,15 @@ lint)
 format)
     format_code
     ;;
+test)
+    run_tests
+    ;;
 cleanup)
     cleanup
     ;;
 *)
     echo "Invalid argument: $1"
-    echo "Usage: $0 {start|lint|format|cleanup} [environment]"
+    echo "Usage: $0 {start|lint|format|test|cleanup} [environment]"
     exit 1
     ;;
 esac

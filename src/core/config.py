@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from urllib.parse import quote
 
 
@@ -11,8 +12,7 @@ class Settings(BaseSettings):
     service_name: str = "UserService"
     log_level: str = "DEBUG"
 
-    class Config:
-        env_file = ".env"
+    model_config: ConfigDict = ConfigDict(env_file=".env")
 
     def get_encoded_database_url(self) -> str:
         """

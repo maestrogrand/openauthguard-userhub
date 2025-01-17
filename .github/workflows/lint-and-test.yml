@@ -1,0 +1,51 @@
+name: Lint and Test
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Clear Python Cache
+        run: |
+          sudo rm -rf ~/.cache/pip
+          sudo rm -rf ~/.pyenv
+          sudo rm -rf .venv
+
+      - name: List Available Python Versions
+        run: ls /opt/hostedtoolcache/Python
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+          check-latest: true
+
+      - name: Verify Python Version
+        run: python --version
+
+      - name: Install Dependencies
+        run: |
+          python3.10 -m venv .venv
+          . .venv/bin/activate
+          pip install --upgrade pip
+          pip install black flake8
+
+      - name: Run Black for Formatting Check
+        run: |
+          . .venv/bin/activate
+          black --check src tests
+
+      - name: Run Flake8 for Linting
+        run: |
+          . .venv/bin/activate
+          flake8 src tests

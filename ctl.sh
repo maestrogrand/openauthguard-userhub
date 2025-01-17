@@ -36,7 +36,8 @@ setup_environment() {
 }
 
 get_port() {
-    PORT=$(python3 -c "from src.core.config import settings; print(settings.port)" 2>/dev/null)
+    PORT=$(python3 -c \
+        "from src.core.config import settings; print(settings.port)" 2>/dev/null)
     if [ -z "$PORT" ]; then
         echo "Port not set in configuration. Exiting."
         deactivate
@@ -89,6 +90,7 @@ lint_code() {
     echo "Linting complete."
 
     deactivate
+    cleanup
 }
 
 format_code() {
@@ -97,7 +99,11 @@ format_code() {
     install_dependencies
 
     echo "Running code formatting..."
-    black src tests
+    if [ -d "tests" ]; then
+        black src tests
+    else
+        black src
+    fi
     echo "Formatting complete."
 
     deactivate

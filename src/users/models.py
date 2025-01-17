@@ -15,19 +15,19 @@ class User(Base):
         String,
         primary_key=True,
         default=lambda: str(uuid.uuid4()),
-        index=True
+        index=True,
     )
     username = Column(
         String,
         unique=True,
         nullable=False,
-        index=True
+        index=True,
     )
     email = Column(
         String,
         unique=True,
         nullable=False,
-        index=True
+        index=True,
     )
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
@@ -37,17 +37,17 @@ class User(Base):
     role = Column(
         Enum("user", "admin", name="user_roles"),
         default="user",
-        nullable=False
+        nullable=False,
     )
     social_links = Column(JSONB, nullable=True)
     created_at = Column(
         DateTime,
         default=datetime.utcnow,
-        nullable=False
+        nullable=False,
     )
     updated_at = Column(
         DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
-        nullable=False
+        nullable=False,
     )

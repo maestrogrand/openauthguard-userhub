@@ -11,7 +11,11 @@ log_level = settings.log_level.upper()
 
 logger.add(
     sys.stderr,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+    format=(
+        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | "
+        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+        "<level>{message}</level>"
+    ),
     level=log_level,
 )
 
@@ -20,7 +24,9 @@ logger.add(
     rotation="10 MB",
     retention="10 days",
     compression="zip",
-    format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
+    format=(
+        "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - " "{message}"
+    ),
     level=log_level,
 )
 

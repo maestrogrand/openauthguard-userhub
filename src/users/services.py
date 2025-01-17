@@ -5,14 +5,21 @@ from src.users.models import User
 from src.users.schemas import UserCreate, UserUpdate, UserResponse
 from src.utils.helpers import hash_password
 
+
 def create_user(request: UserCreate, db: Session) -> UserResponse:
     """
     Create a new user in the database.
     """
     if db.query(User).filter(User.email == request.email).first():
-        raise HTTPException(status_code=400, detail="Email is already registered.")
+        raise HTTPException(
+            status_code=400,
+            detail="Email is already registered.",
+        )
     if db.query(User).filter(User.username == request.username).first():
-        raise HTTPException(status_code=400, detail="Username is already taken.")
+        raise HTTPException(
+            status_code=400,
+            detail="Username is already taken.",
+        )
 
     hashed_password = hash_password(request.password)
     new_user = User(
@@ -52,7 +59,10 @@ def update_user(user_id: str, request: UserUpdate, db: Session) -> UserResponse:
     """
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
+        raise HTTPException(
+            status_code=404,
+            detail="User not found.",
+        )
 
     if request.first_name:
         user.first_name = request.first_name
@@ -81,13 +91,17 @@ def update_user(user_id: str, request: UserUpdate, db: Session) -> UserResponse:
         updated_at=user.updated_at,
     )
 
+
 def get_user_by_id(user_id: str, db: Session) -> UserResponse:
     """
     Retrieve a user by ID.
     """
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
+        raise HTTPException(
+            status_code=404,
+            detail="User not found.",
+        )
 
     return UserResponse(
         user_id=str(user.user_id),
@@ -103,4 +117,3 @@ def get_user_by_id(user_id: str, db: Session) -> UserResponse:
         created_at=user.created_at,
         updated_at=user.updated_at,
     )
-

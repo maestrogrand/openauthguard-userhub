@@ -4,6 +4,7 @@ from src.core.database import engine
 from src.core.logging import logger
 from src.core.config import settings
 
+
 def check_database_connection() -> bool:
     """
     Checks the database connection by attempting to connect to the database.

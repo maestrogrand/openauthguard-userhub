@@ -1,4 +1,4 @@
-name: Lint and Test
+name: Lint and Format
 
 on:
   pull_request:
@@ -21,9 +21,6 @@ jobs:
           sudo rm -rf ~/.pyenv
           sudo rm -rf .venv
 
-      - name: List Available Python Versions
-        run: ls /opt/hostedtoolcache/Python
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -35,7 +32,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          python3.10 -m venv .venv
+          python -m venv .venv
           . .venv/bin/activate
           pip install --upgrade pip
           pip install black flake8
@@ -43,9 +40,17 @@ jobs:
       - name: Run Black for Formatting Check
         run: |
           . .venv/bin/activate
-          black --check src tests
+          if [ -d "tests" ]; then
+            black --check src tests
+          else
+            black --check src
+          fi
 
       - name: Run Flake8 for Linting
         run: |
           . .venv/bin/activate
-          flake8 src tests
+          if [ -d "tests" ]; then
+            flake8 src tests
+          else
+            flake8 src
+          fi

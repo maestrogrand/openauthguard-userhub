@@ -18,11 +18,15 @@ jobs:
       - name: Debug Python Version Cache
         run: ls /opt/hostedtoolcache/Python || echo "Python versions not found"
 
+      - name: Show Environment Variables
+        run: env
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.10
           check-latest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Verify Python Version
         run: python --version

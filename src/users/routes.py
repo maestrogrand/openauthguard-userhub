@@ -8,6 +8,7 @@ from src.users.models import User
 
 auth_router = APIRouter(tags=["Authentication"])
 
+
 @auth_router.post("/register", response_model=UserResponse)
 def register_user(request: UserCreate, db: Session = Depends(get_db)):
     """
@@ -15,7 +16,9 @@ def register_user(request: UserCreate, db: Session = Depends(get_db)):
     """
     return create_user(request, db)
 
+
 user_router = APIRouter(tags=["Users"])
+
 
 @user_router.put("/{user_id}", response_model=UserResponse)
 def edit_user(user_id: UUID, request: UserUpdate, db: Session = Depends(get_db)):
@@ -24,12 +27,14 @@ def edit_user(user_id: UUID, request: UserUpdate, db: Session = Depends(get_db))
     """
     return update_user(str(user_id), request, db)
 
+
 @user_router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: UUID, db: Session = Depends(get_db)):
     """
     Endpoint to retrieve a user's details by their ID.
     """
     return get_user_by_id(str(user_id), db)
+
 
 @user_router.get("/username/{username}", response_model=UserResponse)
 def get_user_by_username(username: str, db: Session = Depends(get_db)):

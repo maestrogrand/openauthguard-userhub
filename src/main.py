@@ -4,6 +4,7 @@ from src.core.logging import logger
 from src.core.config import settings
 from src.users.routes import user_router, auth_router
 from src.core.db_healthcheck import check_database_connection
+import uvicorn
 
 app = FastAPI(
     title=settings.service_name,
@@ -19,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 def health_check():
     """
@@ -27,13 +29,12 @@ def health_check():
     is_db_connected = check_database_connection()
     status = "connected" if is_db_connected else "not connected"
     logger.info(f"Health check: Database is {status}.")
-    return {
-        "status": "up",
-        "database": status
-    }
+    return {"status": "up", "database": status}
+
 
 app.include_router(auth_router)
 app.include_router(user_router, prefix="/users")
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -46,6 +47,7 @@ async def startup_event():
         logger.error("Failed to connect to the database. Shutting down...")
         raise SystemExit("Database connection failed.")
 
+
 @app.on_event("shutdown")
 async def shutdown_event():
     """
@@ -53,6 +55,7 @@ async def shutdown_event():
     Logs the service shutdown.
     """
     logger.info(f"Shutting down service: {settings.service_name}")
+
 
 if __name__ == "__main__":
     logger.info(f"Starting {settings.service_name} on port {settings.port}...")

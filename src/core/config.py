@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from urllib.parse import quote
 
+
 class Settings(BaseSettings):
     database_url: str
     secret_key: str
@@ -20,7 +21,7 @@ class Settings(BaseSettings):
         parsed = self.database_url.split("@")
         if len(parsed) != 2:
             return self.database_url
-        
+
         user_pass, host = parsed[0].replace("postgresql://", ""), parsed[1]
         if ":" not in user_pass:
             return self.database_url
@@ -28,5 +29,6 @@ class Settings(BaseSettings):
         user, password = user_pass.split(":")
         encoded_password = quote(password)
         return f"postgresql://{user}:{encoded_password}@{host}"
+
 
 settings = Settings()

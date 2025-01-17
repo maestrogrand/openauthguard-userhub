@@ -1,34 +1,37 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from uuid import UUID
 from src.core.database import get_db
 from src.users.schemas import UserCreate, UserUpdate, UserResponse
 from src.users.services import create_user, update_user, get_user_by_id
 from src.users.models import User
 
-router = APIRouter(tags=["Users"])
+auth_router = APIRouter(tags=["Authentication"])
 
-@router.post("/register", response_model=UserResponse)
+@auth_router.post("/register", response_model=UserResponse)
 def register_user(request: UserCreate, db: Session = Depends(get_db)):
     """
     Endpoint to register a new individual user.
     """
     return create_user(request, db)
 
-@router.put("/edit/{user_id}", response_model=UserResponse)
-def edit_user(user_id: str, request: UserUpdate, db: Session = Depends(get_db)):
+user_router = APIRouter(tags=["Users"])
+
+@user_router.put("/{user_id}", response_model=UserResponse)
+def edit_user(user_id: UUID, request: UserUpdate, db: Session = Depends(get_db)):
     """
     Endpoint to update an existing user's profile.
     """
-    return update_user(user_id, request, db)
+    return update_user(str(user_id), request, db)
 
-@router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: str, db: Session = Depends(get_db)):
+@user_router.get("/{user_id}", response_model=UserResponse)
+def get_user(user_id: UUID, db: Session = Depends(get_db)):
     """
     Endpoint to retrieve a user's details by their ID.
     """
-    return get_user_by_id(user_id, db)
+    return get_user_by_id(str(user_id), db)
 
-@router.get("/username/{username}", response_model=UserResponse)
+@user_router.get("/username/{username}", response_model=UserResponse)
 def get_user_by_username(username: str, db: Session = Depends(get_db)):
     """
     Endpoint to retrieve a user's details by their username.
@@ -50,17 +53,3 @@ def get_user_by_username(username: str, db: Session = Depends(get_db)):
         created_at=user.created_at,
         updated_at=user.updated_at,
     )
-
-@router.get("/tenant/{company_name}")
-def get_tenant_by_company_name(company_name: str, db: Session = Depends(get_db)):
-    """
-    Endpoint to retrieve tenant details by company name.
-    """
-    tenant = db.query(Tenant).filter(Tenant.company_name.ilike(company_name)).first()
-    if not tenant:
-        raise HTTPException(status_code=404, detail="Tenant not found.")
-    return {
-        "tenant_id": tenant.tenant_id,
-        "company_name": tenant.company_name,
-        "created_at": tenant.created_at,
-    }

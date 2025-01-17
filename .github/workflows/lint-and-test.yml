@@ -1,4 +1,4 @@
-name: Lint and Format
+name: Lint and Test
 
 on:
   pull_request:
@@ -27,30 +27,23 @@ jobs:
           python-version: 3.10
           check-latest: true
 
-      - name: Verify Python Version
-        run: python --version
-
       - name: Install Dependencies
         run: |
-          python -m venv .venv
+          python3 -m venv .venv
           . .venv/bin/activate
           pip install --upgrade pip
           pip install black flake8
 
-      - name: Run Black for Formatting Check
+      - name: Run Black Formatter Check
         run: |
           . .venv/bin/activate
-          if [ -d "tests" ]; then
-            black --check src tests
-          else
-            black --check src
-          fi
+          black --check src || exit 1
 
-      - name: Run Flake8 for Linting
+      - name: Run Flake8 Linter
         run: |
           . .venv/bin/activate
-          if [ -d "tests" ]; then
-            flake8 src tests
-          else
-            flake8 src
-          fi
+          flake8 src || exit 1
+
+      - name: Output Success Message
+        if: success()
+        run: echo "Linting and formatting checks passed successfully!"
